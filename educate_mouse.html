@@ -1,0 +1,215 @@
+<!-- 
+	Copyright 2021 Raiza Hanada, Damien Masson, Géry Casiez, Mathieu Nancel, Sylvain Malacria
+    (Université de Lille, CNRS, Centrale Lille, UMR 9189 CRIStAL, University of Waterloo)
+	See LICENSE.md
+-->
+<html lang="en">
+
+<head>
+	<title>Educate your mouse</title>
+	<script src="/js/jquery-3.4.1.min.js"></script>
+	<script src="/js/bootstrap.bundle.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+	<script src="https://kit.fontawesome.com/0e6f12c56c.js" crossorigin="anonymous"></script>
+	<script type="text/javascript"  src="/js/tf_utils.js"></script>
+
+	<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div class="container">
+
+		<div class="row justify-content-center">
+			<h1>Educate your computer mouse</h1>
+		</div>
+
+		<p class="text_center">
+			This tool helps you adjust the mouse settings in the configuration panel to mimic the cursor behavior you
+			have on another computer with different computer mouse/monitor.
+		</p>
+
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<p class="small">STEP 1: fill the information below</p>
+					<div class="card mt-2">
+						<div class="card-body">
+							<h5 class="card-title">Configuration of the computer with the cursor behavior you want to mimick</h5>
+							<div class="form-group row">
+								<label for="initCPI" class="col-sm-7 col-form-label"><i class="fas fa-mouse"></i>  Mouse resolution (CPI or DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="initCPI" placeholder="e.g. 1200">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="initFreq" class="col-sm-7 col-form-label"><i class="fas fa-wave-square"></i> Mouse input frequency (Hz)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="initFreq" placeholder="e.g. 125">
+								</div>
+							</div>
+			
+							<div class="form-group row">
+								<label for="initDPI" class="col-sm-7 col-form-label"><i class="fas fa-desktop"></i> Display pixel density (DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="initDPI" placeholder="e.g. 87">
+								</div>
+							</div>
+
+							<p class="card-text small">
+								Adjust the slider and checkbox below to replicate exactly what appears in the mouse configuration panel
+							</p>
+
+							<div style="position: relative;" class="row">
+									<img class="windows_config_img">
+									<input type="range" id="initSlider" min="1" max="11" value="1" class="windows_config_slider">
+									<input type="checkbox" id="initEnhanced" value="" class="windows_config_epp">
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-md-6">
+					<p class="small">STEP 2: fill the information below to get the setting to set for your mouse</p>
+					<div class="card mt-2">
+						<div class="card-body">
+							<h5 class="card-title">Configuration of the computer where you want to replicate the cursor behavior</h5>
+							<div class="form-group row">
+								<label for="finalCPI" class="col-sm-7 col-form-label"><i class="fas fa-mouse"></i> Mouse resolution (CPI or DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="finalCPI" placeholder="e.g. 1200">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="finalFreq" class="col-sm-7 col-form-label"><i class="fas fa-wave-square"></i> Mouse input frequency (Hz)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="finalFreq" placeholder="e.g. 125">
+								</div>
+							</div>
+			
+							<div class="form-group row">
+								<label for="finalDPI" class="col-sm-7 col-form-label"><i class="fas fa-desktop"></i> Display pixel density (DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="finalDPI" placeholder="e.g. 87">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<p class="small mt-3">STEP 3: go in your mouse configuration panel and adjust the settings as follows</p>
+					<div class="card form-group mt-2">
+						<img class="windows_config_img">
+						<input disabled="true" type="range" id="finalSlider" min="1" max="11" value="1" class="windows_config_slider">
+						<input disabled="true" type="checkbox" id="finalEnhanced" value="" class="windows_config_epp">
+						<div style="position: absolute; width:100%; height:100%; background-color: #00000080; z-index: 8; display: none;" class="loading"></div>
+						<div style="position:absolute; top: 40%; left: 50%; z-index: 9; display: none;" class="loading" id="loader"></div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	
+
+	<script type="text/javascript">
+		// Returns true if all the required fields are completed
+		function isFormComplete() {
+			return $('#initDPI').val() != "" && 
+				   $('#initCPI').val() != "" &&
+				   $('#initFreq').val() != "" &&
+				   $('#finalCPI').val() != "" &&
+				   $('#finalFreq').val() != "" &&
+				   $('#finalDPI').val() != "";
+		}
+
+		// Called if at least one input was modified
+		function onInputChanged(event) {
+			if (isFormComplete()) {
+				compute();
+			}
+		}
+
+
+		$('#initCPI').on('input', onInputChanged);
+		$('#initDPI ').on('input', onInputChanged);
+		$('#initFreq').on('input', onInputChanged);
+		$('#finalCPI').on('input', onInputChanged);
+		$('#finalFreq').on('input', onInputChanged);
+		$('#finalDPI').on('input', onInputChanged);
+		$('#initSlider').on('input', onInputChanged);
+		$('#initEnhanced').on('input', onInputChanged);
+	
+
+		
+		function compute() {
+			// Show that it is loading
+			$('.loading').show();
+
+			var initCPI = $('#initCPI').val();
+			var initFreq = $('#initFreq').val();
+			var initDPI = $('#initDPI').val();
+			var initOS = "Windows"
+			var initGF = $('#initSlider').val();
+			var initEpp = document.getElementById('initEnhanced').checked;
+			var finalCPI = $('#finalCPI').val()
+			var finalFreq = $('#finalFreq').val()
+			var finalDPI = $('#finalDPI').val()
+			var finalOS = "Windows";
+			var finalEpp = false;
+
+
+			var srcTf = tf.getTfFilePath(initGF, initOS, initEpp);
+
+			// We consider all the tfs available on windows
+			var candidateTfs = [];
+			for (const tfPath of tf.tfPaths) {
+				if (tfPath.includes("windows")) {
+					candidateTfs.push(tfPath);
+				}
+			}
+
+
+			tf.whenAvailable(function() {
+				var srcCounts = tf.getTfCounts(srcTf);
+				var initMs = tf.getMotorSpeed(srcCounts, initCPI, initFreq);
+				var initVs = tf.getVisualSpeed(srcCounts, initDPI, initFreq);
+
+
+				// We compute the area between the initial (source) function and all possible target functions, in the visual space
+				// We then pick the target function resulting in the lowest area
+				var minArea = Number.MAX_VALUE;
+				var closestTf = null;
+
+				for (const candidateTf of candidateTfs) {
+					var candidateCounts = tf.getTfCounts(candidateTf);
+					var finalMs = tf.getMotorSpeed(candidateCounts, finalCPI, finalFreq);
+					var finalVs = tf.getVisualSpeed(candidateCounts, finalDPI, finalFreq);
+					var area = tf.getAreaBetweenCurve({x: initMs, y: initVs}, {x: finalMs, y: finalVs});
+
+					if (area < minArea) {
+						closestTf = candidateTf;
+						minArea = area;
+					}
+				}
+
+				var parsedClosestTf = tf.parseTfPath(closestTf);
+
+				document.getElementById("finalSlider").value = parsedClosestTf.speed;
+				$('#finalEnhanced').prop('checked', parsedClosestTf.epp);
+
+				// Stop loading, we have our answer
+				$('.loading').hide();
+			})
+		}
+
+
+	</script>
+
+</body>
+
+</html>

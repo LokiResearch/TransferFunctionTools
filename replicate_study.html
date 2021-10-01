@@ -1,0 +1,200 @@
+<!-- 
+	Copyright 2021 Raiza Hanada, Damien Masson, Géry Casiez, Mathieu Nancel, Sylvain Malacria
+    (Université de Lille, CNRS, Centrale Lille, UMR 9189 CRIStAL, University of Waterloo)
+	See LICENSE.md
+-->
+<html lang="en">
+<head>
+	<title>Gain function recommender</title>
+	<script src="/js/jquery-3.4.1.min.js"></script>
+	<script src="/js/bootstrap.bundle.min.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="/css/style.css" />
+	<link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css" />
+	<script src="https://kit.fontawesome.com/0e6f12c56c.js" crossorigin="anonymous"></script>
+	<script type="text/javascript"  src="/js/tf_utils.js"></script>
+
+	<meta charset="utf-8">
+</head>
+
+<body>
+
+	<div class="container">
+
+		<div class="row justify-content-center">
+			<h1>Replicate the pointing transfer function from an experiment</h1>
+		</div>
+
+		<p class="text_center">
+			This tool is designed to create an hardware-independent transfer function to replicate a pointing transfer function from previous work and use it in libpointing.
+			There is no need to use the same hardware as the original experiment.
+		</p>
+
+
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">
+					<p class="small">STEP 1: fill the information below (from previous work)</p>
+					<div class="card mt-2">
+						<div class="card-body">
+							<h5 class="card-title">Experimental settings you want to replicate</h5>
+							<div class="form-group row">
+								<label for="initCPI" class="col-sm-7 col-form-label"><i class="fas fa-mouse"></i> Mouse resolution (CPI or DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="initCPI" placeholder="e.g. 1200">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="initFreq" class="col-sm-7 col-form-label"><i class="fas fa-wave-square"></i> Mouse input frequency (Hz)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="initFreq" placeholder="e.g. 125">
+								</div>
+							</div>
+			
+							<div class="form-group row">
+								<label for="initDPI" class="col-sm-7 col-form-label"><i class="fas fa-desktop"></i> Display pixel density (DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="initDPI" placeholder="e.g. 87">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="initOS" class="col-sm-7 col-form-label">Operating System</label>
+								<div class="col-sm-4">
+									<select id='initOS' class="form-control">
+										<option value="Windows">Windows 10</option>
+										<option value="macOS">macOS</option>
+									</select>
+								</div>
+							</div>
+							
+
+							<p class="card-text small">
+								Adjust the slider and checkbox below to replicate the settings used in the experiment
+							</p>
+
+							<div style="margin: auto; position: relative;" class="row">
+									<img id="initConfigImg" class="windows_config_img">
+									<input type="range" id="initSlider" min="1" max="11" value="1" class="windows_config_slider">
+									<input type="checkbox" id="initEnhanced" value="" class="windows_config_epp">
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="col-md-6">
+					<p class="small">STEP 2: fill the mouse resolution and pixel density of the display used to replicate the transfer function</p>
+					<div class="card mt-2">
+						<div class="card-body">
+							<h5 class="card-title">Hardware characteristics for your experiment</h5>
+							<div class="form-group row">
+								<label for="finalCPI" class="col-sm-7 col-form-label"><i class="fas fa-mouse"></i> Mouse resolution (CPI or DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="finalCPI" placeholder="e.g. 1200">
+								</div>
+							</div>
+
+							<div class="form-group row">
+								<label for="finalFreq" class="col-sm-7 col-form-label"><i class="fas fa-wave-square"></i> Mouse input frequency (Hz)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="finalFreq" placeholder="e.g. 125">
+								</div>
+							</div>
+			
+							<div class="form-group row">
+								<label for="finalDPI" class="col-sm-7 col-form-label"><i class="fas fa-desktop"></i> Display pixel density (DPI)</label>
+								<div class="col-sm-4">
+									<input type="text" class="form-control" id="finalDPI" placeholder="e.g. 87">
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<p class="small mt-3">STEP 3: download the transfer function to use in libpointing</p>
+
+					<a href="javascript:downloadTf();">
+						<div style="text-align: center; background-color: #EEEEEE;" class="card form-group mt-2" id="downloadBox">
+							<div class="card-body">
+								<h5>Click to download the transfer function</h5>
+							</div>
+						</div>
+					</a>
+
+					<p class="small mt-3">STEP 4: follow these instructions to use the function in libpointing</p>
+					<a href="https://github.com/INRIA/libpointing/wiki/Custom-Functions">https://github.com/INRIA/libpointing/wiki/Custom-Functions</a>
+				</div>
+
+
+			</div>
+		</div>
+	<script type="text/javascript">
+		function downloadTf() {
+			if (isFormComplete()) {
+				compute("transformed");
+			}
+		}
+
+		// Returns true if all the required fields are completed
+		function isFormComplete() {
+			return $('#initDPI').val() != "" && 
+				   $('#initCPI').val() != "" &&
+				   $('#initFreq').val() != "" &&
+				   $('#finalCPI').val() != "" &&
+				   $('#finalFreq').val() != "" &&
+				   $('#finalDPI').val() != "";
+		}
+
+		$('#initOS').on('input', function(event) {
+			// Change the slider accordingly
+			var os = ($('#initOS').val() == "Windows") ? "windows" : "macos";
+			document.getElementById("initConfigImg").className = os + "_config_img";
+			document.getElementById("initSlider").className = os + "_config_slider";
+			document.getElementById("initSlider").max = os == "windows" ? 11 : 10;
+			document.getElementById("initEnhanced").className = os + "_config_epp";
+		});
+		
+
+		function compute(ope) {
+			var initCPI = $('#initCPI').val();
+			var initFreq = $('#initFreq').val();
+			var initDPI = $('#initDPI').val();
+			var initOS = $('#initOS').val()
+			var initGF = $('#initSlider').val();
+			var initEpp = document.getElementById('initEnhanced').checked;
+			var finalCPI = $('#finalCPI').val()
+			var finalFreq = $('#finalFreq').val()
+			var finalDPI = $('#finalDPI').val()
+
+			var srcTf = tf.getTfFilePath(initGF, initOS, initEpp);
+
+			tf.whenAvailable(function() {
+				var srcCounts = tf.getTfCounts(srcTf);
+				var initMs = tf.getMotorSpeed(srcCounts, initCPI, initFreq, false);
+				var initVs = tf.getVisualSpeed(srcCounts, initDPI, initFreq);
+
+				var content = ""
+				for (var i = 0; i < initMs.length; ++i) {
+					var count = ((initMs[i]/finalFreq)*finalCPI).toFixed(6);
+					var pixels = ((initVs[i]/finalFreq)/0.0254)*finalDPI;
+					if (count % 1 == 0) {
+						content += parseInt(count) + ": " + pixels + "\n";
+					}
+				}
+				download("transformedGF.dat", content)
+			});
+		}
+
+		function download(filename, text) {
+			var element = document.createElement('a');
+			element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+			element.setAttribute('download', filename);
+			element.style.display = 'none';
+			document.body.appendChild(element);
+			element.click();
+			document.body.removeChild(element);
+		}
+	</script>
+</body>
+</html>
