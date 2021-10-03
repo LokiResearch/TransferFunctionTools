@@ -21,37 +21,33 @@ var tf = new function() {
 				var self = this;
 				request.onreadystatechange = function () {
 					if (this.readyState === 4 && this.status === 200) {
-						var type = this.getResponseHeader('Content-Type');
-						if (type.indexOf("text") !== 1) {
-							// Parse the TF curve and store it in cache
-							counts = {}
-							for (const l of this.responseText.split("\n")) {
-								var line = l.split("#")[0].trim();
-								if (line.length > 0) {
-									var split = line.split(":");
-									var key = split[0].trim();
-									var v = split[1].trim();
-	
-									if (!key.includes("max-count")) {
-										counts[parseInt(key)] = parseFloat(v);
-									}
-								}
-	
-							}
-	
-							self.tfCache[tfFile] = counts;
-							
-							// If cache fully loaded, we call the callback
-							var fullyLoaded = true;
-							for (const [tfFile, value] of Object.entries(self.tfCache)) {
-								if (!value) {
-									fullyLoaded = false;
+						// Parse the TF curve and store it in cache
+						counts = {}
+						for (const l of this.responseText.split("\n")) {
+							var line = l.split("#")[0].trim();
+							if (line.length > 0) {
+								var split = line.split(":");
+								var key = split[0].trim();
+								var v = split[1].trim();
+
+								if (!key.includes("max-count")) {
+									counts[parseInt(key)] = parseFloat(v);
 								}
 							}
-	
-							if (fullyLoaded) {
-								onComplete();
+						}
+
+						self.tfCache[tfFile] = counts;
+						
+						// If cache fully loaded, we call the callback
+						var fullyLoaded = true;
+						for (const [tfFile, value] of Object.entries(self.tfCache)) {
+							if (!value) {
+								fullyLoaded = false;
 							}
+						}
+
+						if (fullyLoaded) {
+							onComplete();
 						}
 					}
 				}
