@@ -32,7 +32,6 @@
     z-index: 2;
     width: 258px;
     height: 120px;
-    content: url("../img/osx_slider.png");
 }
 
 .macos_config_slider {
@@ -51,7 +50,6 @@
     z-index: 2;
     width: 438px;
     height: 120px;
-    content: url("../img/windows_slider_no_epp.png");
 }
 
 
@@ -76,16 +74,17 @@
 
 /* Mozilla Firefox */
 .windows_config_slider::-moz-range-thumb {
-    -webkit-appearance: none;
-    margin-top: -9px;
     width: 14px;
     height: 23px;
+    border-radius: 0px;
     cursor: pointer;
+    border: none;
     background-image: url("../img/windows_cursor.png");
 }
 
 .macos_config_slider::-moz-range-thumb {
-    -webkit-appearance: none;
+    border: none;
+    border-radius: 0px;
     margin-top: -9px;
     width: 23px;
     height: 25px;

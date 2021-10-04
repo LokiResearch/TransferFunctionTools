@@ -75,7 +75,7 @@
 							</p>
 
 							<div style="margin: auto; position: relative;" class="row">
-									<img id="initConfigImg" class="windows_config_img">
+									<img id="initConfigImg" src="img/windows_slider_no_epp.png" class="windows_config_img">
 									<input type="range" id="initSlider" min="1" max="11" value="1" class="windows_config_slider">
 									<input type="checkbox" id="initEnhanced" value="" class="windows_config_epp">
 							</div>
@@ -150,6 +150,8 @@
 			// Change the slider accordingly
 			var os = ($('#initOS').val() == "Windows") ? "windows" : "macos";
 			document.getElementById("initConfigImg").className = os + "_config_img";
+			document.getElementById("initConfigImg").src = "img/" + os + "_slider" + (os=="windows"? "_no_epp" : "") + ".png";
+
 			document.getElementById("initSlider").className = os + "_config_slider";
 			document.getElementById("initSlider").max = os == "windows" ? 11 : 10;
 			document.getElementById("initEnhanced").className = os + "_config_epp";
