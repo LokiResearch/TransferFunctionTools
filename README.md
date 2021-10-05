@@ -12,7 +12,7 @@ If you use one of these tools or the provided source code for academic purposes,
 
 [![DOI](https://img.shields.io/badge/doi-10.1145/3472749.3474767-blue)]( https://doi.org/10.1145/3472749.3474767)
 ```
-@inproceedings{10.1145/3126594.3126619,
+@inproceedings{10.1145/3472749.3474767,
     author = {Hanada, Raiza and Masson, Damien and Casiez, G\'{e}ry and Nancel, Mathieu and Malacria, Sylvain},
     title = {Relevance and Applicability of Hardware-independent Pointing Transfer Functions},
     year = {2021},
