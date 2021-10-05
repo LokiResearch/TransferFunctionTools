@@ -110,6 +110,8 @@
 						<input disabled="true" type="checkbox" id="finalEnhanced" value="" class="windows_config_epp">
 						<div style="position: absolute; width:100%; height:100%; background-color: #00000080; z-index: 8; display: none;" class="loading"></div>
 						<div style="position:absolute; top: 40%; left: 50%; z-index: 9; display: none;" class="loading" id="loader"></div>
+						<p id="untested-warning" style="padding-left: 8px; display: none;" class="text-danger small">Warning: The suggested closest function has not been validated by human assessors. Refer to the publication for more details (<a href="https://hal.inria.fr/hal-03322657v1">HAL</a>).</p>
+						<p id="large-difference-warning" style="padding-left: 8px; display: none;" class="text-danger small">Warning: Large difference between the initial and suggested function (AUC>.53). The function might yield a noticeably different pointing behavior.</p>
 					</div>
 				</div>
 			</div>
@@ -202,6 +204,19 @@
 
 				document.getElementById("finalSlider").value = parsedClosestTf.speed;
 				$('#finalEnhanced').prop('checked', parsedClosestTf.epp);
+
+				// Show/hide warnings depending on the parameters & results
+				var tested = initGF == 8 && initOS == "Windows" && initEpp; // We only tested WIN+2 (with epp)
+				tested &&= initCPI == "800" && initDPI == "122";  // We only tested on one set of CPI/DPI (reference)
+				tested &&= initFreq == finalFreq && initFreq == "125"; // We kept the same frequency for the mouse
+				tested &&= ["400", "800", "1600", "3200"].includes(finalCPI);
+				tested &&= ["122", "87"].includes(finalDPI);
+
+				var untested_warning = document.getElementById("untested-warning");
+				untested_warning.style.display = tested ? "none" : "block";
+
+				var large_diff_warning = document.getElementById("large-difference-warning");
+				large_diff_warning.style.display = minArea > 0.34 ? "block" : "none"; // Supposed to be .53 (as reported in paper) when using "similaritymeasures" in python. The value is lower with other algorithms as they truncate curves of different length.
 
 				// Stop loading, we have our answer
 				$('.loading').hide();
