@@ -135,7 +135,7 @@ var tf = new function() {
 	}
 
 	// Resamples a curve so that it has a value for each given x position
-	function resampleAtGivenPos(c1, positionx) {
+	this.resampleAtGivenPos = function(c1, positionx) {
 		var targeti = 0;
 		var i = 1;
 		var D = 0;
@@ -169,8 +169,8 @@ var tf = new function() {
 		var positionx = (c1.x.concat(c2.x.filter((item) => c1.x.indexOf(item) < 0))).sort();
 		positionx = positionx.filter((item) => item <= limit);
 
-		curve1 = resampleAtGivenPos(c1, positionx);
-		curve2 = resampleAtGivenPos(c2, positionx);
+		curve1 = this.resampleAtGivenPos(c1, positionx);
+		curve2 = this.resampleAtGivenPos(c2, positionx);
 
 		// We compute the area between the curves by adding the areas of all the quadrilaterals that we can form
 		var area = 0;

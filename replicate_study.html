@@ -177,13 +177,18 @@
 				var initMs = tf.getMotorSpeed(srcCounts, initCPI, initFreq, false);
 				var initVs = tf.getVisualSpeed(srcCounts, initDPI, initFreq);
 
-				var content = ""
+				var content = "";
+				var curve = {x: [], y:[]};
 				for (var i = 0; i < initMs.length; ++i) {
-					var count = ((initMs[i]/finalFreq)*finalCPI).toFixed(6);
+					var count = ((initMs[i]/finalFreq)*finalCPI);
 					var pixels = ((initVs[i]/finalFreq)/0.0254)*finalDPI;
-					if (count % 1 == 0) {
-						content += parseInt(count) + ": " + pixels + "\n";
-					}
+					curve.x.push(count);
+					curve.y.push(pixels)
+				}
+				var resampledCurve = tf.resampleAtGivenPos(curve, Array.from(Array(128).keys()));
+				var content = "";
+				for (var i = 0; i < 128; ++i) {
+					content += i.toString() + ": " + resampledCurve.y[Math.min(i, resampledCurve.y.length-1)] + "\n";
 				}
 				download("transformedGF.dat", content)
 			});
